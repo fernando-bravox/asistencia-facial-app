@@ -17,6 +17,7 @@
     "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
-    "nanoid": "^5.0.7"
+    "nanoid": "^5.0.7",
+    "nodemailer": "^7.0.12"
   }
 }

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { nanoid } from "nanoid";
 import ExcelJS from "exceljs";
+import { sendAttendanceEmail } from "../utils/mailer.js";
+
 import { spawn } from "child_process";
 
 
@@ -454,7 +456,27 @@ profRouter.post("/subjects/:id/attendance/manual", async (req, res) => {
   };
 
   await db.collection("attendance").doc(attendanceId).set(attendance);
+
+try {
+  const subjectSnap = await db.collection("subjects").doc(req.params.id).get(); // ✅ AQUÍ
+  const subjectName = subjectSnap.exists ? (subjectSnap.data()?.name || "") : "";
+
+  await sendAttendanceEmail({
+    to: student.email,
+    studentName: student.name,
+    subjectName,
+    status: attendance.status,
+    timestampISO: attendance.createdAt,
+  });
+
+  console.log("✅ Correo enviado a:", student.email);
+} catch (error) {
+  console.error("❌ Error enviando correo de asistencia:", error); // mejor que solo error.message
+}
+
+
   res.status(201).json({ attendance: { id: attendanceId, ...attendance } });
+  
 });
 
 // Scan mark (profesor) ✅ con Firestore
@@ -543,6 +565,22 @@ const attendance = {
 
 
   await db.collection("attendance").doc(attendanceId).set(attendance);
+try {
+  const subjectSnap = await db.collection("subjects").doc(subjectId).get();
+  const subjectName = subjectSnap.exists ? (subjectSnap.data()?.name || "") : "";
+
+  await sendAttendanceEmail({
+    to: student.email,
+    studentName: student.name,
+    subjectName,
+    status: attendance.status,
+    timestampISO: attendance.createdAt,
+  });
+
+  console.log("✅ Correo enviado (scan) a:", student.email);
+} catch (error) {
+  console.error("❌ Error enviando correo (scan):", error);
+}
 
   return res.status(201).json({
     ok: true,
