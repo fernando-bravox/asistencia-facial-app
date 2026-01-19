@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node --watch src/index.js",
+    "dev": "node src/index.js",
     "start": "node src/index.js",
     "seed": "node scripts/seed.js"
   },
@@ -17,6 +17,7 @@
     "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
+    "mysql2": "^3.16.1",
     "nanoid": "^5.0.7",
     "nodemailer": "^7.0.12"
   }
